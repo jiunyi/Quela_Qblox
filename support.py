@@ -1,8 +1,10 @@
 import warnings
 from pathlib import Path
+from typing import List, Union, Literal
 import matplotlib.pyplot as plt
 import ipywidgets as widgets
 import numpy as np
+from numpy.random import randint
 import quantify_core.data.handling as dh
 from IPython.display import display
 from qblox_instruments import Cluster, ClusterType, PlugAndPlay
@@ -32,6 +34,7 @@ from utils.tutorial_analysis_classes import (
     QubitFluxSpectroscopyAnalysis,
     ResonatorFluxSpectroscopyAnalysis,
 )
+from quantify_scheduler.operations.gate_library import X90, Measure, Reset, Rxy, X, Y
 from utils.tutorial_utils import (
     set_drive_attenuation,
     set_readout_attenuation,
@@ -239,4 +242,81 @@ def reset_offset(flux_callable_map:dict):
         flux_callable_map[i](0.0)
 
 
-        
+
+
+
+# TODO: ToTest ZZinteractions
+def ZZinteractions_sched(
+    times: Union[np.ndarray, float],
+    ctrl_qubit: str,
+    meas_qubit: str,
+    artificial_detuning: float = 0,
+    repetitions: int = 1,
+) -> Schedule:
+    r"""
+    Generate a schedule for performing a Ramsey experiment to measure the
+    dephasing time :math:`T_2^{\star}`.
+
+    Schedule sequence
+        .. centered:: Reset -- pi/2 -- Idle(tau) -- pi/2 -- Measure
+
+    See section III.B.2. of :cite:t:`krantz_quantum_2019` for an explanation of the Bloch-Redfield
+    model of decoherence and the Ramsey experiment.
+
+    Parameters
+    ----------
+    times
+        an array of wait times tau between the pi/2 pulses.
+    artificial_detuning
+        frequency in Hz of the software emulated, or ``artificial`` qubit detuning, which is
+        implemented by changing the phase of the second pi/2 (recovery) pulse. The
+        artificial detuning changes the observed frequency of the Ramsey oscillation,
+        which can be useful to distinguish a slow oscillation due to a small physical
+        detuning from the decay of the dephasing noise.
+    qubit
+        the name of the qubit e.g., :code:`"q0"` to perform the Ramsey experiment on.
+    repetitions
+        The amount of times the Schedule will be repeated.
+
+    Returns
+    -------
+    :
+        An experiment schedule.
+
+    """
+    # ensure times is an iterable when passing floats.
+    times = np.asarray(times)
+    times = times.reshape(times.shape or (1,))
+
+    schedule = Schedule("Ramsey", repetitions)
+
+    if isinstance(times, float):
+        times = [times]
+
+    for i, tau in enumerate(times):
+        schedule.add(Reset(meas_qubit,ctrl_qubit), label=f"Reset {i}")
+        schedule.add(X(ctrl_qubit))
+        schedule.add(X90(meas_qubit))
+
+        # the phase of the second pi/2 phase progresses to propagate
+        recovery_phase = np.rad2deg(2 * np.pi * artificial_detuning * tau)
+        schedule.add(
+            Rxy(theta=90, phi=recovery_phase, qubit=meas_qubit), ref_pt="start", rel_time=tau
+        )
+        schedule.add(Measure(meas_qubit, acq_index=i), label=f"Measurement {i}")
+    return schedule      
+
+# TODO: RB
+def SQRB_schedule(
+    qubit:str,
+    gate_num:int,
+    repetitions: int=1,
+) -> Schedule:
+
+    sched = Schedule('RB',repetitions)
+    sched.add(Reset(qubit))
+    for idx in range(gate_num):
+        pass
+    sched.add(Measure(qubit))
+    
+    return sched
