@@ -1,0 +1,77 @@
+{
+    "fit_success": true,
+    "frequency_01": {
+        "__dtype__": "UFloat",
+        "nominal_value": 4110161010.7234435,
+        "std_dev": 1049776.0623447637
+    },
+    "fit_msg": "Summary\nFrequency 0-1: 4.1102$\\pm$0.0010 GHz\nPeak width: 11.4$\\pm$2.7 MHz\n",
+    "fit_result": {
+        "Lorentzian_peak": {
+            "success": true,
+            "message": "Fit succeeded.",
+            "params": {
+                "x0": {
+                    "name": "x0",
+                    "user_data": null,
+                    "init_value": 4110822747.0623074,
+                    "min": -Infinity,
+                    "max": Infinity,
+                    "brute_step": null,
+                    "stderr": 1049776.0623447637,
+                    "correl": {
+                        "width": 0.02718516569693174,
+                        "a": 0.017444645333601037,
+                        "c": -0.007611091183484678
+                    },
+                    "value": 4110161010.7234435
+                },
+                "width": {
+                    "name": "width",
+                    "user_data": null,
+                    "init_value": 40201512.61036511,
+                    "min": -Infinity,
+                    "max": Infinity,
+                    "brute_step": null,
+                    "stderr": 2714901.52244274,
+                    "correl": {
+                        "x0": 0.02718516569693174,
+                        "a": 0.7384807856094393,
+                        "c": -0.3099517976680219
+                    },
+                    "value": 11376238.872208046
+                },
+                "a": {
+                    "name": "a",
+                    "user_data": null,
+                    "init_value": 18237.542708377627,
+                    "min": -Infinity,
+                    "max": Infinity,
+                    "brute_step": null,
+                    "stderr": 291.0156546107714,
+                    "correl": {
+                        "x0": 0.017444645333601037,
+                        "width": 0.7384807856094393,
+                        "c": -0.4272852314934036
+                    },
+                    "value": 1627.5301340316234
+                },
+                "c": {
+                    "name": "c",
+                    "user_data": null,
+                    "init_value": 0.0005782408389131309,
+                    "min": -Infinity,
+                    "max": Infinity,
+                    "brute_step": null,
+                    "stderr": 2.8665194583568783e-06,
+                    "correl": {
+                        "x0": -0.007611091183484678,
+                        "width": -0.3099517976680219,
+                        "a": -0.4272852314934036
+                    },
+                    "value": 0.000571245324563785
+                }
+            }
+        }
+    }
+}

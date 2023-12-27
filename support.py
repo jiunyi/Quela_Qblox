@@ -126,15 +126,6 @@ def two_tone_spec_sched_nco(
 
     return sched
 
-# close all instruments
-def shut_down(cluster:Cluster,flux_map:dict):
-    '''
-        Disconnect all the instruments.
-    '''
-    reset_offset(flux_map)
-    cluster.reset() 
-    Instrument.close_all() 
-
 # connect to clusters
 def connect_clusters():
     with PlugAndPlay() as p:            # Scan for available devices and display
@@ -241,7 +232,14 @@ def reset_offset(flux_callable_map:dict):
     for i in flux_callable_map:
         flux_callable_map[i](0.0)
 
-
+def shut_down(cluster:Cluster,flux_map:dict):
+    '''
+        Disconnect all the instruments.
+    '''
+    reset_offset(flux_map)
+    cluster.reset() 
+    cluster.close()
+    Instrument.close_all() 
 
 
 
